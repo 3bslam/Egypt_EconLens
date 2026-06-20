@@ -1,4 +1,6 @@
-![](https://github.com/3bslam/Egypt_EconLens/raw/main/screenshots/dashboard_demo.mp4)
+<p align="center">
+  <img src="screenshots/dashboard_demo.gif" alt="Egypt EconLens Dashboard Walkthrough" width="100%"/>
+</p>
 
 <h1 align="center">🇪🇬 Egypt EconLens — Trade & Supply Chain BI Platform</h1>
 
