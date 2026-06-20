@@ -1,0 +1,51 @@
+# ============================================================
+# Egypt EconLens — .gitignore
+# ============================================================
+
+# -------------------- Large Data Files --------------------
+# CSV files over GitHub's 100MB limit (hosted on Google Drive)
+data/TradeData_CLEAN.csv
+data/TradeData_HS6.csv
+data/synthetic_supply_chain_2019_2025.csv
+data/TradeData_5_13_2026_18_44_14.csv
+
+# -------------------- Database Backups --------------------
+*.bak
+
+# -------------------- Power BI (large duplicates) ----------
+last update/
+
+# -------------------- Archives & Compressed ----------------
+*.zip
+*.rar
+
+# -------------------- Animated Icons (large assets) --------
+animated icons/
+
+# -------------------- IDE & Build Files --------------------
+*.suo
+*.user
+*.vs/
+.vs/
+bin/
+obj/
+*.dtproj.user
+*.database
+*.jfm
+*.pfx
+*.publishsettings
+
+# -------------------- OS Files -----------------------------
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
+
+# -------------------- Python -------------------------------
+__pycache__/
+*.pyc
+.env
+venv/
+
+# -------------------- Documentation (large .docx) ----------
+*.docx

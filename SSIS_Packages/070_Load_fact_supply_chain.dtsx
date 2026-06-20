@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<DTS:Executable xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:refId="Package"
+  DTS:CreationDate="5/11/2026 12:00:00 AM"
+  DTS:CreationName="Microsoft.Package"
+  DTS:DTSID="{490182F6-B67C-430C-8D47-A980EC7072EB}"
+  DTS:ExecutableType="Microsoft.Package"
+  DTS:ObjectName="070_Load_fact_supply_chain"
+  DTS:PackageFormatVersion="8">
+  <DTS:Property DTS:Name="PackageFormatVersion">8</DTS:Property>
+  <DTS:ConnectionManagers>
+    <DTS:ConnectionManager DTS:refId="Package.ConnectionManagers[EgyptBI_DWH]"
+      DTS:CreationName="OLEDB"
+      DTS:DTSID="{C885D996-D672-43B7-8105-4D5A3D7285B0}"
+      DTS:ObjectName="EgyptBI_DWH">
+      <DTS:ObjectData>
+        <DTS:ConnectionManager DTS:ConnectionString="Data Source=3BSALAM;Initial Catalog=EgyptBI_DWH;Provider=SQLNCLI11.1;Integrated Security=SSPI;" />
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+  </DTS:ConnectionManagers>
+  <DTS:Executables>
+      <DTS:Executable DTS:refId="Package\Load_Supply_Chain"
+        DTS:CreationName="Microsoft.ExecuteSQLTask"
+        DTS:DTSID="{B2D34CFF-BB38-478B-942F-09281CC3F05C}"
+        DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+        DTS:ObjectName="Load_Supply_Chain">
+        <DTS:ObjectData>
+          <SQLTask:SqlTaskData SQLTask:Connection="{C885D996-D672-43B7-8105-4D5A3D7285B0}"
+            SQLTask:SqlStatementSource="INSERT INTO fact_supply_chain (
+    date_key, product_key, country_key, sales_usd, profit_usd,
+    actual_shipping_days, scheduled_shipping_days, shipping_delay_days,
+    is_late, delivery_status, order_status, shipping_mode, is_synthetic)
+SELECT YEAR(TRY_CAST(s.order_date AS DATE))*100+MONTH(TRY_CAST(s.order_date AS DATE)),
+    dp.product_key, dc.country_key,
+    TRY_CAST(s.sales_usd AS DECIMAL(10,2)), TRY_CAST(s.profit_usd AS DECIMAL(10,2)),
+    TRY_CAST(s.actual_shipping_days AS INT), TRY_CAST(s.scheduled_shipping_days AS INT),
+    TRY_CAST(s.shipping_delay_days AS INT), TRY_CAST(s.is_late AS BIT),
+    LTRIM(RTRIM(s.delivery_status)), LTRIM(RTRIM(s.order_status)),
+    LTRIM(RTRIM(s.shipping_mode)), TRY_CAST(s.is_synthetic AS BIT)
+FROM stg_supply_chain s
+INNER JOIN dim_date dd ON dd.date_key = YEAR(TRY_CAST(s.order_date AS DATE))*100+MONTH(TRY_CAST(s.order_date AS DATE))
+INNER JOIN dim_product dp ON dp.product_name = LTRIM(RTRIM(s.product_name))
+INNER JOIN dim_country dc ON dc.country_name = LTRIM(RTRIM(s.order_country))
+WHERE TRY_CAST(s.order_date AS DATE) IS NOT NULL
+  AND NOT EXISTS (
+      SELECT 1 FROM fact_supply_chain f
+      WHERE f.date_key = YEAR(TRY_CAST(s.order_date AS DATE))*100+MONTH(TRY_CAST(s.order_date AS DATE))
+        AND f.product_key = dp.product_key AND f.country_key = dc.country_key
+        AND f.sales_usd = TRY_CAST(s.sales_usd AS DECIMAL(10,2)));"
+            SQLTask:ResultType="0"
+            SQLTask:BypassPrepare="True"
+            xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+        </DTS:ObjectData>
+      </DTS:Executable>
+  </DTS:Executables>
+</DTS:Executable>

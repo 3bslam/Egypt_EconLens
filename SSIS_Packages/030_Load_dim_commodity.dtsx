@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<DTS:Executable xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:refId="Package"
+  DTS:CreationDate="5/11/2026 12:00:00 AM"
+  DTS:CreationName="Microsoft.Package"
+  DTS:DTSID="{F7AD0583-25E5-4857-8845-269545D8019F}"
+  DTS:ExecutableType="Microsoft.Package"
+  DTS:ObjectName="030_Load_dim_commodity"
+  DTS:PackageFormatVersion="8">
+  <DTS:Property DTS:Name="PackageFormatVersion">8</DTS:Property>
+  <DTS:ConnectionManagers>
+    <DTS:ConnectionManager DTS:refId="Package.ConnectionManagers[EgyptBI_DWH]"
+      DTS:CreationName="OLEDB"
+      DTS:DTSID="{C885D996-D672-43B7-8105-4D5A3D7285B0}"
+      DTS:ObjectName="EgyptBI_DWH">
+      <DTS:ObjectData>
+        <DTS:ConnectionManager DTS:ConnectionString="Data Source=3BSALAM;Initial Catalog=EgyptBI_DWH;Provider=SQLNCLI11.1;Integrated Security=SSPI;" />
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+  </DTS:ConnectionManagers>
+  <DTS:Executables>
+      <DTS:Executable DTS:refId="Package\Load_Commodities"
+        DTS:CreationName="Microsoft.ExecuteSQLTask"
+        DTS:DTSID="{22C800C5-3DFA-48A5-8CBB-FA5C5AE1F508}"
+        DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+        DTS:ObjectName="Load_Commodities">
+        <DTS:ObjectData>
+          <SQLTask:SqlTaskData SQLTask:Connection="{C885D996-D672-43B7-8105-4D5A3D7285B0}"
+            SQLTask:SqlStatementSource="IF OBJECT_ID(&apos;stg_comtrade_raw&apos;, &apos;U&apos;) IS NOT NULL
+BEGIN
+    INSERT INTO dim_commodity (hs_code, [description], is_strategic)
+    SELECT DISTINCT LTRIM(RTRIM(CAST(cmdCode AS VARCHAR(10)))), LTRIM(RTRIM(CAST(cmdDesc AS NVARCHAR(200)))),
+        CASE WHEN LTRIM(RTRIM(cmdCode)) IN (&apos;10&apos;,&apos;1001&apos;,&apos;1005&apos;,&apos;27&apos;,&apos;2709&apos;,&apos;2710&apos;,&apos;2711&apos;,&apos;08&apos;,&apos;0805&apos;,&apos;31&apos;,&apos;72&apos;,&apos;73&apos;) THEN 1 ELSE 0 END
+    FROM stg_comtrade_raw
+    WHERE cmdCode IS NOT NULL AND LTRIM(RTRIM(CAST(cmdCode AS VARCHAR(10)))) NOT IN (&apos;&apos;, &apos;TOTAL&apos;)
+      AND NOT EXISTS (SELECT 1 FROM dim_commodity dc WHERE dc.hs_code = LTRIM(RTRIM(CAST(stg_comtrade_raw.cmdCode AS VARCHAR(10)))));
+END"
+            SQLTask:ResultType="0"
+            SQLTask:BypassPrepare="True"
+            xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+        </DTS:ObjectData>
+      </DTS:Executable>
+  </DTS:Executables>
+</DTS:Executable>

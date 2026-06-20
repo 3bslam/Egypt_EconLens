@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<DTS:Executable xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:refId="Package"
+  DTS:CreationDate="5/11/2026 12:00:00 AM"
+  DTS:CreationName="Microsoft.Package"
+  DTS:DTSID="{0EC33D36-D0DC-482E-BB09-84C436F727B2}"
+  DTS:ExecutableType="Microsoft.Package"
+  DTS:ObjectName="060_Load_fact_trade_flows"
+  DTS:PackageFormatVersion="8">
+  <DTS:Property DTS:Name="PackageFormatVersion">8</DTS:Property>
+  <DTS:ConnectionManagers>
+    <DTS:ConnectionManager DTS:refId="Package.ConnectionManagers[EgyptBI_DWH]"
+      DTS:CreationName="OLEDB"
+      DTS:DTSID="{C885D996-D672-43B7-8105-4D5A3D7285B0}"
+      DTS:ObjectName="EgyptBI_DWH">
+      <DTS:ObjectData>
+        <DTS:ConnectionManager DTS:ConnectionString="Data Source=3BSALAM;Initial Catalog=EgyptBI_DWH;Provider=SQLNCLI11.1;Integrated Security=SSPI;" />
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+  </DTS:ConnectionManagers>
+  <DTS:Executables>
+      <DTS:Executable DTS:refId="Package\Load_Trade_Flows"
+        DTS:CreationName="Microsoft.ExecuteSQLTask"
+        DTS:DTSID="{5511A696-09CB-4D30-B1E4-EF196811E97D}"
+        DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+        DTS:ObjectName="Load_Trade_Flows">
+        <DTS:ObjectData>
+          <SQLTask:SqlTaskData SQLTask:Connection="{C885D996-D672-43B7-8105-4D5A3D7285B0}"
+            SQLTask:SqlStatementSource="IF OBJECT_ID(&apos;stg_comtrade_raw&apos;, &apos;U&apos;) IS NOT NULL
+BEGIN
+    INSERT INTO fact_trade_flows (date_key, country_key, commodity_key, flow_type, trade_value_usd, qty_kg, source_system)
+    SELECT TRY_CAST(LTRIM(RTRIM(CAST(s.period AS VARCHAR(10)))) AS INT),
+        dc.country_key, dcm.commodity_key,
+        CASE WHEN LTRIM(RTRIM(s.flowDesc)) = &apos;Export&apos; THEN &apos;X&apos; ELSE &apos;M&apos; END,
+        TRY_CAST(s.primaryValue AS DECIMAL(18,2)), TRY_CAST(s.netWgt AS DECIMAL(18,2)), &apos;Comtrade&apos;
+    FROM stg_comtrade_raw s
+    INNER JOIN dim_date dd ON dd.date_key = TRY_CAST(LTRIM(RTRIM(CAST(s.period AS VARCHAR(10)))) AS INT)
+    INNER JOIN dim_country dc ON dc.country_name = LTRIM(RTRIM(CAST(s.partnerDesc AS NVARCHAR(100))))
+    INNER JOIN dim_commodity dcm ON dcm.hs_code = LTRIM(RTRIM(CAST(s.cmdCode AS VARCHAR(10))))
+    WHERE LTRIM(RTRIM(CAST(s.cmdCode AS VARCHAR(10)))) NOT IN (&apos;&apos;, &apos;TOTAL&apos;)
+      AND TRY_CAST(s.partnerCode AS INT) != 0
+      AND LTRIM(RTRIM(s.flowDesc)) IN (&apos;Export&apos;, &apos;Import&apos;)
+      AND NOT EXISTS (
+          SELECT 1 FROM fact_trade_flows f
+          WHERE f.date_key = TRY_CAST(LTRIM(RTRIM(CAST(s.period AS VARCHAR(10)))) AS INT)
+            AND f.country_key = dc.country_key AND f.commodity_key = dcm.commodity_key
+            AND f.flow_type = CASE WHEN LTRIM(RTRIM(s.flowDesc)) = &apos;Export&apos; THEN &apos;X&apos; ELSE &apos;M&apos; END);
+END"
+            SQLTask:ResultType="0"
+            SQLTask:BypassPrepare="True"
+            xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+        </DTS:ObjectData>
+      </DTS:Executable>
+  </DTS:Executables>
+</DTS:Executable>

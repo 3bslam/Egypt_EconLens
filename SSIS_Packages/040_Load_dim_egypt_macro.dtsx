@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+<DTS:Executable xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:refId="Package"
+  DTS:CreationDate="5/11/2026 12:00:00 AM"
+  DTS:CreationName="Microsoft.Package"
+  DTS:DTSID="{E2EE64EC-FF82-4C97-9261-7BB59FC1BE64}"
+  DTS:ExecutableType="Microsoft.Package"
+  DTS:ObjectName="040_Load_dim_egypt_macro"
+  DTS:PackageFormatVersion="8">
+  <DTS:Property DTS:Name="PackageFormatVersion">8</DTS:Property>
+  <DTS:ConnectionManagers>
+    <DTS:ConnectionManager DTS:refId="Package.ConnectionManagers[EgyptBI_DWH]"
+      DTS:CreationName="OLEDB"
+      DTS:DTSID="{C885D996-D672-43B7-8105-4D5A3D7285B0}"
+      DTS:ObjectName="EgyptBI_DWH">
+      <DTS:ObjectData>
+        <DTS:ConnectionManager DTS:ConnectionString="Data Source=3BSALAM;Initial Catalog=EgyptBI_DWH;Provider=SQLNCLI11.1;Integrated Security=SSPI;" />
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+  </DTS:ConnectionManagers>
+  <DTS:Executables>
+      <DTS:Executable DTS:refId="Package\Create_WB_Staging"
+        DTS:CreationName="Microsoft.ExecuteSQLTask"
+        DTS:DTSID="{ACE581D1-A8BB-4D9C-98CA-6D6B7190DC0C}"
+        DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+        DTS:ObjectName="Create_WB_Staging">
+        <DTS:ObjectData>
+          <SQLTask:SqlTaskData SQLTask:Connection="{C885D996-D672-43B7-8105-4D5A3D7285B0}"
+            SQLTask:SqlStatementSource="IF OBJECT_ID(&apos;stg_world_bank&apos;, &apos;U&apos;) IS NOT NULL
+BEGIN
+    ;WITH wb_unpivoted AS (
+        SELECT LTRIM(RTRIM(col2)) AS sc, 2019 AS yr, TRY_CAST(NULLIF(LTRIM(RTRIM(col5)),&apos;..&apos;) AS FLOAT) AS val FROM stg_world_bank
+        UNION ALL SELECT LTRIM(RTRIM(col2)), 2020, TRY_CAST(NULLIF(LTRIM(RTRIM(col6)),&apos;..&apos;) AS FLOAT) FROM stg_world_bank
+        UNION ALL SELECT LTRIM(RTRIM(col2)), 2021, TRY_CAST(NULLIF(LTRIM(RTRIM(col7)),&apos;..&apos;) AS FLOAT) FROM stg_world_bank
+        UNION ALL SELECT LTRIM(RTRIM(col2)), 2022, TRY_CAST(NULLIF(LTRIM(RTRIM(col8)),&apos;..&apos;) AS FLOAT) FROM stg_world_bank
+        UNION ALL SELECT LTRIM(RTRIM(col2)), 2023, TRY_CAST(NULLIF(LTRIM(RTRIM(col9)),&apos;..&apos;) AS FLOAT) FROM stg_world_bank
+        UNION ALL SELECT LTRIM(RTRIM(col2)), 2024, TRY_CAST(NULLIF(LTRIM(RTRIM(col10)),&apos;..&apos;) AS FLOAT) FROM stg_world_bank
+        UNION ALL SELECT LTRIM(RTRIM(col2)), 2025, TRY_CAST(NULLIF(LTRIM(RTRIM(col11)),&apos;..&apos;) AS FLOAT) FROM stg_world_bank
+    ), wb_pivoted AS (
+        SELECT yr, yr*100+6 AS date_key,
+            MAX(CASE WHEN sc LIKE &apos;%NY.GDP.MKTP.CD%&apos; THEN val END) AS gdp_usd,
+            MAX(CASE WHEN sc LIKE &apos;%NY.GDP.MKTP.KD.ZG%&apos; THEN val END) AS gdp_growth_pct,
+            MAX(CASE WHEN sc LIKE &apos;%FP.CPI.TOTL.ZG%&apos; THEN val END) AS inflation_pct,
+            MAX(CASE WHEN sc LIKE &apos;%FI.RES.TOTL.CD%&apos; THEN val END) AS foreign_reserves_usd
+        FROM wb_unpivoted WHERE sc IS NOT NULL GROUP BY yr
+    )
+    INSERT INTO dim_egypt_macro (date_key,[year],gdp_usd,gdp_growth_pct,inflation_pct,foreign_reserves_usd)
+    SELECT date_key,yr,CAST(gdp_usd AS DECIMAL(18,0)),CAST(gdp_growth_pct AS DECIMAL(5,2)),CAST(inflation_pct AS DECIMAL(5,2)),CAST(foreign_reserves_usd AS DECIMAL(18,0))
+    FROM wb_pivoted WHERE NOT EXISTS (SELECT 1 FROM dim_egypt_macro em WHERE em.date_key = wb_pivoted.date_key);
+END"
+            SQLTask:ResultType="0"
+            SQLTask:BypassPrepare="True"
+            xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+        </DTS:ObjectData>
+      </DTS:Executable>
+      <DTS:Executable DTS:refId="Package\Update_Exchange_Rates"
+        DTS:CreationName="Microsoft.ExecuteSQLTask"
+        DTS:DTSID="{DAC3C6C4-0F31-47EE-AEA3-7831931AA1AB}"
+        DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+        DTS:ObjectName="Update_Exchange_Rates">
+        <DTS:ObjectData>
+          <SQLTask:SqlTaskData SQLTask:Connection="{C885D996-D672-43B7-8105-4D5A3D7285B0}"
+            SQLTask:SqlStatementSource="UPDATE dim_egypt_macro SET usd_egp_annual_avg = 16.77 WHERE [year] = 2019;
+UPDATE dim_egypt_macro SET usd_egp_annual_avg = 15.81 WHERE [year] = 2020;
+UPDATE dim_egypt_macro SET usd_egp_annual_avg = 15.67 WHERE [year] = 2021;
+UPDATE dim_egypt_macro SET usd_egp_annual_avg = 19.16 WHERE [year] = 2022;
+UPDATE dim_egypt_macro SET usd_egp_annual_avg = 30.85 WHERE [year] = 2023;
+UPDATE dim_egypt_macro SET usd_egp_annual_avg = 47.58 WHERE [year] = 2024;
+UPDATE dim_egypt_macro SET usd_egp_annual_avg = 50.53 WHERE [year] = 2025;"
+            SQLTask:ResultType="0"
+            SQLTask:BypassPrepare="True"
+            xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+        </DTS:ObjectData>
+      </DTS:Executable>
+  </DTS:Executables>
+    <DTS:PrecedenceConstraints>
+      <DTS:PrecedenceConstraint DTS:refId="Package.PrecedenceConstraints\Create_WB_Staging to Update_Exchange_Rates"
+        DTS:CreationName=""
+        DTS:DTSID="{BA9379AC-D21A-4F68-93C4-A8A5A92E6ED9}"
+        DTS:From="Package\Create_WB_Staging"
+        DTS:To="Package\Update_Exchange_Rates"
+        DTS:ObjectName="Create_WB_Staging to Update_Exchange_Rates" />
+    </DTS:PrecedenceConstraints>
+</DTS:Executable>

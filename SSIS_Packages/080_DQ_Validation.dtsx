@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<DTS:Executable xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:refId="Package"
+  DTS:CreationDate="5/11/2026 12:00:00 AM"
+  DTS:CreationName="Microsoft.Package"
+  DTS:DTSID="{667AD32D-9FDF-4DF9-8E6D-F5D5B6E5BFBC}"
+  DTS:ExecutableType="Microsoft.Package"
+  DTS:ObjectName="080_DQ_Validation"
+  DTS:PackageFormatVersion="8">
+  <DTS:Property DTS:Name="PackageFormatVersion">8</DTS:Property>
+  <DTS:ConnectionManagers>
+    <DTS:ConnectionManager DTS:refId="Package.ConnectionManagers[EgyptBI_DWH]"
+      DTS:CreationName="OLEDB"
+      DTS:DTSID="{C885D996-D672-43B7-8105-4D5A3D7285B0}"
+      DTS:ObjectName="EgyptBI_DWH">
+      <DTS:ObjectData>
+        <DTS:ConnectionManager DTS:ConnectionString="Data Source=3BSALAM;Initial Catalog=EgyptBI_DWH;Provider=SQLNCLI11.1;Integrated Security=SSPI;" />
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+  </DTS:ConnectionManagers>
+  <DTS:Executables>
+      <DTS:Executable DTS:refId="Package\Run_DQ_Checks"
+        DTS:CreationName="Microsoft.ExecuteSQLTask"
+        DTS:DTSID="{F07DE55D-0404-4A3B-A2D0-9EEBBCADDA83}"
+        DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+        DTS:ObjectName="Run_DQ_Checks">
+        <DTS:ObjectData>
+          <SQLTask:SqlTaskData SQLTask:Connection="{C885D996-D672-43B7-8105-4D5A3D7285B0}"
+            SQLTask:SqlStatementSource="INSERT INTO dq_validation_log ([year], flow_type, actual_value, [status])
+SELECT d.[year], f.flow_type, SUM(f.trade_value_usd),
+    CASE WHEN SUM(f.trade_value_usd) &gt; 0 THEN &apos;PASS&apos; ELSE &apos;FAIL&apos; END
+FROM fact_trade_flows f
+JOIN dim_date d ON f.date_key = d.date_key
+GROUP BY d.[year], f.flow_type;"
+            SQLTask:ResultType="0"
+            SQLTask:BypassPrepare="True"
+            xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+        </DTS:ObjectData>
+      </DTS:Executable>
+      <DTS:Executable DTS:refId="Package\Cleanup_Staging"
+        DTS:CreationName="Microsoft.ExecuteSQLTask"
+        DTS:DTSID="{5DB5C0E8-354C-448C-8396-B4B5E4EC282F}"
+        DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+        DTS:ObjectName="Cleanup_Staging">
+        <DTS:ObjectData>
+          <SQLTask:SqlTaskData SQLTask:Connection="{C885D996-D672-43B7-8105-4D5A3D7285B0}"
+            SQLTask:SqlStatementSource="DROP TABLE IF EXISTS stg_comtrade_raw;
+DROP TABLE IF EXISTS stg_supply_chain;
+DROP TABLE IF EXISTS stg_exchange_rate;
+DROP TABLE IF EXISTS stg_world_bank;"
+            SQLTask:ResultType="0"
+            SQLTask:BypassPrepare="True"
+            xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+        </DTS:ObjectData>
+      </DTS:Executable>
+  </DTS:Executables>
+    <DTS:PrecedenceConstraints>
+      <DTS:PrecedenceConstraint DTS:refId="Package.PrecedenceConstraints\Run_DQ_Checks to Cleanup_Staging"
+        DTS:CreationName=""
+        DTS:DTSID="{AF0D65F4-F804-4CBB-9476-5BAB47AFB6E7}"
+        DTS:From="Package\Run_DQ_Checks"
+        DTS:To="Package\Cleanup_Staging"
+        DTS:ObjectName="Run_DQ_Checks to Cleanup_Staging" />
+    </DTS:PrecedenceConstraints>
+</DTS:Executable>

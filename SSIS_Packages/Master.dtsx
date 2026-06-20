@@ -1,0 +1,163 @@
+<?xml version="1.0"?>
+<DTS:Executable xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:refId="Package"
+  DTS:CreationDate="5/11/2026 12:00:00 AM"
+  DTS:CreationName="Microsoft.Package"
+  DTS:DTSID="{B22FD28F-C93E-4FE1-B0A7-DB100DC5F214}"
+  DTS:ExecutableType="Microsoft.Package"
+  DTS:ObjectName="Master"
+  DTS:PackageFormatVersion="8">
+  <DTS:Property DTS:Name="PackageFormatVersion">8</DTS:Property>
+  <DTS:ConnectionManagers>
+    <DTS:ConnectionManager DTS:refId="Package.ConnectionManagers[EgyptBI_DWH]"
+      DTS:CreationName="OLEDB"
+      DTS:DTSID="{C885D996-D672-43B7-8105-4D5A3D7285B0}"
+      DTS:ObjectName="EgyptBI_DWH">
+      <DTS:ObjectData>
+        <DTS:ConnectionManager DTS:ConnectionString="Data Source=3BSALAM;Initial Catalog=EgyptBI_DWH;Provider=SQLNCLI11.1;Integrated Security=SSPI;" />
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+  </DTS:ConnectionManagers>
+  <DTS:Executables>
+      <DTS:Executable DTS:refId="Package\Run_010_Load_dim_date"
+        DTS:CreationName="Microsoft.ExecutePackageTask"
+        DTS:DTSID="{6C765701-B3D7-4C01-81B2-8D7FB1C3151B}"
+        DTS:ExecutableType="Microsoft.ExecutePackageTask"
+        DTS:ObjectName="Run_010_Load_dim_date">
+        <DTS:ObjectData>
+          <ExecutePackageTask>
+            <UseProjectReference>True</UseProjectReference>
+            <PackageName>010_Load_dim_date.dtsx</PackageName>
+          </ExecutePackageTask>
+        </DTS:ObjectData>
+      </DTS:Executable>
+      <DTS:Executable DTS:refId="Package\Run_020_Load_dim_country"
+        DTS:CreationName="Microsoft.ExecutePackageTask"
+        DTS:DTSID="{2F66622F-11D2-4A3E-91E5-CE59FB3831B4}"
+        DTS:ExecutableType="Microsoft.ExecutePackageTask"
+        DTS:ObjectName="Run_020_Load_dim_country">
+        <DTS:ObjectData>
+          <ExecutePackageTask>
+            <UseProjectReference>True</UseProjectReference>
+            <PackageName>020_Load_dim_country.dtsx</PackageName>
+          </ExecutePackageTask>
+        </DTS:ObjectData>
+      </DTS:Executable>
+      <DTS:Executable DTS:refId="Package\Run_030_Load_dim_commodity"
+        DTS:CreationName="Microsoft.ExecutePackageTask"
+        DTS:DTSID="{CA1D2DD9-3E02-40D9-87FD-3A230C61FCCA}"
+        DTS:ExecutableType="Microsoft.ExecutePackageTask"
+        DTS:ObjectName="Run_030_Load_dim_commodity">
+        <DTS:ObjectData>
+          <ExecutePackageTask>
+            <UseProjectReference>True</UseProjectReference>
+            <PackageName>030_Load_dim_commodity.dtsx</PackageName>
+          </ExecutePackageTask>
+        </DTS:ObjectData>
+      </DTS:Executable>
+      <DTS:Executable DTS:refId="Package\Run_040_Load_dim_egypt_macro"
+        DTS:CreationName="Microsoft.ExecutePackageTask"
+        DTS:DTSID="{EE24148C-461B-4380-A59A-205C4255C798}"
+        DTS:ExecutableType="Microsoft.ExecutePackageTask"
+        DTS:ObjectName="Run_040_Load_dim_egypt_macro">
+        <DTS:ObjectData>
+          <ExecutePackageTask>
+            <UseProjectReference>True</UseProjectReference>
+            <PackageName>040_Load_dim_egypt_macro.dtsx</PackageName>
+          </ExecutePackageTask>
+        </DTS:ObjectData>
+      </DTS:Executable>
+      <DTS:Executable DTS:refId="Package\Run_050_Load_dim_product"
+        DTS:CreationName="Microsoft.ExecutePackageTask"
+        DTS:DTSID="{4E9072E2-C1B8-49EF-8206-BE1806E8CC33}"
+        DTS:ExecutableType="Microsoft.ExecutePackageTask"
+        DTS:ObjectName="Run_050_Load_dim_product">
+        <DTS:ObjectData>
+          <ExecutePackageTask>
+            <UseProjectReference>True</UseProjectReference>
+            <PackageName>050_Load_dim_product.dtsx</PackageName>
+          </ExecutePackageTask>
+        </DTS:ObjectData>
+      </DTS:Executable>
+      <DTS:Executable DTS:refId="Package\Run_060_Load_fact_trade_flows"
+        DTS:CreationName="Microsoft.ExecutePackageTask"
+        DTS:DTSID="{78D6981B-4195-4202-BF09-63CC24A8F256}"
+        DTS:ExecutableType="Microsoft.ExecutePackageTask"
+        DTS:ObjectName="Run_060_Load_fact_trade_flows">
+        <DTS:ObjectData>
+          <ExecutePackageTask>
+            <UseProjectReference>True</UseProjectReference>
+            <PackageName>060_Load_fact_trade_flows.dtsx</PackageName>
+          </ExecutePackageTask>
+        </DTS:ObjectData>
+      </DTS:Executable>
+      <DTS:Executable DTS:refId="Package\Run_070_Load_fact_supply_chain"
+        DTS:CreationName="Microsoft.ExecutePackageTask"
+        DTS:DTSID="{9F0394FC-1D7D-45BA-B7B0-427A2BBEE3AE}"
+        DTS:ExecutableType="Microsoft.ExecutePackageTask"
+        DTS:ObjectName="Run_070_Load_fact_supply_chain">
+        <DTS:ObjectData>
+          <ExecutePackageTask>
+            <UseProjectReference>True</UseProjectReference>
+            <PackageName>070_Load_fact_supply_chain.dtsx</PackageName>
+          </ExecutePackageTask>
+        </DTS:ObjectData>
+      </DTS:Executable>
+      <DTS:Executable DTS:refId="Package\Run_080_DQ_Validation"
+        DTS:CreationName="Microsoft.ExecutePackageTask"
+        DTS:DTSID="{217975E3-554A-439F-A385-267E4D443563}"
+        DTS:ExecutableType="Microsoft.ExecutePackageTask"
+        DTS:ObjectName="Run_080_DQ_Validation">
+        <DTS:ObjectData>
+          <ExecutePackageTask>
+            <UseProjectReference>True</UseProjectReference>
+            <PackageName>080_DQ_Validation.dtsx</PackageName>
+          </ExecutePackageTask>
+        </DTS:ObjectData>
+      </DTS:Executable>
+  </DTS:Executables>
+    <DTS:PrecedenceConstraints>
+      <DTS:PrecedenceConstraint DTS:refId="Package.PrecedenceConstraints\Run_010_Load_dim_date to Run_020_Load_dim_country"
+        DTS:CreationName=""
+        DTS:DTSID="{BD67FFE8-1A7E-4EF9-BDC1-51E1BDE0E0FB}"
+        DTS:From="Package\Run_010_Load_dim_date"
+        DTS:To="Package\Run_020_Load_dim_country"
+        DTS:ObjectName="Run_010_Load_dim_date to Run_020_Load_dim_country" />
+      <DTS:PrecedenceConstraint DTS:refId="Package.PrecedenceConstraints\Run_020_Load_dim_country to Run_030_Load_dim_commodity"
+        DTS:CreationName=""
+        DTS:DTSID="{56D41D71-509A-4830-98B7-C21F5D21A656}"
+        DTS:From="Package\Run_020_Load_dim_country"
+        DTS:To="Package\Run_030_Load_dim_commodity"
+        DTS:ObjectName="Run_020_Load_dim_country to Run_030_Load_dim_commodity" />
+      <DTS:PrecedenceConstraint DTS:refId="Package.PrecedenceConstraints\Run_030_Load_dim_commodity to Run_040_Load_dim_egypt_macro"
+        DTS:CreationName=""
+        DTS:DTSID="{3DFF69C0-8CA7-451D-A1BB-C5D99E297C5D}"
+        DTS:From="Package\Run_030_Load_dim_commodity"
+        DTS:To="Package\Run_040_Load_dim_egypt_macro"
+        DTS:ObjectName="Run_030_Load_dim_commodity to Run_040_Load_dim_egypt_macro" />
+      <DTS:PrecedenceConstraint DTS:refId="Package.PrecedenceConstraints\Run_040_Load_dim_egypt_macro to Run_050_Load_dim_product"
+        DTS:CreationName=""
+        DTS:DTSID="{99C92D3B-B436-43A0-A87E-95C9E6014B9C}"
+        DTS:From="Package\Run_040_Load_dim_egypt_macro"
+        DTS:To="Package\Run_050_Load_dim_product"
+        DTS:ObjectName="Run_040_Load_dim_egypt_macro to Run_050_Load_dim_product" />
+      <DTS:PrecedenceConstraint DTS:refId="Package.PrecedenceConstraints\Run_050_Load_dim_product to Run_060_Load_fact_trade_flows"
+        DTS:CreationName=""
+        DTS:DTSID="{BAD29D0D-2BBE-434E-900B-8B4534673D7A}"
+        DTS:From="Package\Run_050_Load_dim_product"
+        DTS:To="Package\Run_060_Load_fact_trade_flows"
+        DTS:ObjectName="Run_050_Load_dim_product to Run_060_Load_fact_trade_flows" />
+      <DTS:PrecedenceConstraint DTS:refId="Package.PrecedenceConstraints\Run_060_Load_fact_trade_flows to Run_070_Load_fact_supply_chain"
+        DTS:CreationName=""
+        DTS:DTSID="{81699335-2124-4CF6-AFBB-FACE07144F8B}"
+        DTS:From="Package\Run_060_Load_fact_trade_flows"
+        DTS:To="Package\Run_070_Load_fact_supply_chain"
+        DTS:ObjectName="Run_060_Load_fact_trade_flows to Run_070_Load_fact_supply_chain" />
+      <DTS:PrecedenceConstraint DTS:refId="Package.PrecedenceConstraints\Run_070_Load_fact_supply_chain to Run_080_DQ_Validation"
+        DTS:CreationName=""
+        DTS:DTSID="{4C2EFAF4-1F5B-4731-8F8C-BFEFBA917170}"
+        DTS:From="Package\Run_070_Load_fact_supply_chain"
+        DTS:To="Package\Run_080_DQ_Validation"
+        DTS:ObjectName="Run_070_Load_fact_supply_chain to Run_080_DQ_Validation" />
+    </DTS:PrecedenceConstraints>
+</DTS:Executable>

@@ -1,0 +1,102 @@
+<?xml version="1.0"?>
+<DTS:Executable xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:refId="Package"
+  DTS:CreationDate="5/11/2026 12:00:00 AM"
+  DTS:CreationName="Microsoft.Package"
+  DTS:DTSID="{3BD8839E-3F83-45C4-BF6E-D89BDDAC3F29}"
+  DTS:ExecutableType="Microsoft.Package"
+  DTS:ObjectName="050_Load_dim_product"
+  DTS:PackageFormatVersion="8">
+  <DTS:Property DTS:Name="PackageFormatVersion">8</DTS:Property>
+  <DTS:ConnectionManagers>
+    <DTS:ConnectionManager DTS:refId="Package.ConnectionManagers[EgyptBI_DWH]"
+      DTS:CreationName="OLEDB"
+      DTS:DTSID="{C885D996-D672-43B7-8105-4D5A3D7285B0}"
+      DTS:ObjectName="EgyptBI_DWH">
+      <DTS:ObjectData>
+        <DTS:ConnectionManager DTS:ConnectionString="Data Source=3BSALAM;Initial Catalog=EgyptBI_DWH;Provider=SQLNCLI11.1;Integrated Security=SSPI;" />
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+  </DTS:ConnectionManagers>
+  <DTS:Executables>
+      <DTS:Executable DTS:refId="Package\Create_SC_Staging"
+        DTS:CreationName="Microsoft.ExecuteSQLTask"
+        DTS:DTSID="{A5E2BA48-F8B1-4887-8E4F-21009B90C00F}"
+        DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+        DTS:ObjectName="Create_SC_Staging">
+        <DTS:ObjectData>
+          <SQLTask:SqlTaskData SQLTask:Connection="{C885D996-D672-43B7-8105-4D5A3D7285B0}"
+            SQLTask:SqlStatementSource="IF OBJECT_ID(&apos;stg_supply_chain&apos;, &apos;U&apos;) IS NULL
+BEGIN
+    CREATE TABLE stg_supply_chain (
+        order_date NVARCHAR(100), [year] NVARCHAR(50), order_country NVARCHAR(200),
+        product_name NVARCHAR(300), category_name NVARCHAR(200), department_name NVARCHAR(200),
+        product_price NVARCHAR(100), sales_usd NVARCHAR(100), profit_usd NVARCHAR(100),
+        actual_shipping_days NVARCHAR(50), scheduled_shipping_days NVARCHAR(50),
+        shipping_delay_days NVARCHAR(50), is_late NVARCHAR(10), delivery_status NVARCHAR(100),
+        order_status NVARCHAR(100), shipping_mode NVARCHAR(100), is_synthetic NVARCHAR(10)
+    );
+    BULK INSERT stg_supply_chain FROM &apos;E:\iti\iti final project\data\synthetic_supply_chain_2019_2025.csv&apos;
+    WITH (FORMAT = &apos;CSV&apos;, FIRSTROW = 2, CODEPAGE = &apos;65001&apos;, TABLOCK);
+END"
+            SQLTask:ResultType="0"
+            SQLTask:BypassPrepare="True"
+            xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+        </DTS:ObjectData>
+      </DTS:Executable>
+      <DTS:Executable DTS:refId="Package\Load_Products"
+        DTS:CreationName="Microsoft.ExecuteSQLTask"
+        DTS:DTSID="{72B66059-DF74-4DA5-8181-6A5C21983C3B}"
+        DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+        DTS:ObjectName="Load_Products">
+        <DTS:ObjectData>
+          <SQLTask:SqlTaskData SQLTask:Connection="{C885D996-D672-43B7-8105-4D5A3D7285B0}"
+            SQLTask:SqlStatementSource=";WITH ranked AS (
+    SELECT product_name, category_name, department_name,
+        TRY_CAST(product_price AS DECIMAL(10,2)) AS price,
+        ROW_NUMBER() OVER (PARTITION BY product_name ORDER BY order_date DESC) AS rn
+    FROM stg_supply_chain WHERE product_name IS NOT NULL AND LTRIM(RTRIM(product_name)) != &apos;&apos;
+)
+INSERT INTO dim_product (product_name, category_name, department_name, product_price)
+SELECT product_name, category_name, department_name, price
+FROM ranked WHERE rn = 1
+AND NOT EXISTS (SELECT 1 FROM dim_product dp WHERE dp.product_name = ranked.product_name);"
+            SQLTask:ResultType="0"
+            SQLTask:BypassPrepare="True"
+            xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+        </DTS:ObjectData>
+      </DTS:Executable>
+      <DTS:Executable DTS:refId="Package\Load_SC_Countries"
+        DTS:CreationName="Microsoft.ExecuteSQLTask"
+        DTS:DTSID="{95A7392B-5828-48F6-8E2A-5BB5A77D1A88}"
+        DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+        DTS:ObjectName="Load_SC_Countries">
+        <DTS:ObjectData>
+          <SQLTask:SqlTaskData SQLTask:Connection="{C885D996-D672-43B7-8105-4D5A3D7285B0}"
+            SQLTask:SqlStatementSource="INSERT INTO dim_country (country_name, is_egypt)
+SELECT DISTINCT LTRIM(RTRIM(order_country)),
+    CASE WHEN LTRIM(RTRIM(order_country)) = &apos;Egypt&apos; THEN 1 ELSE 0 END
+FROM stg_supply_chain
+WHERE order_country IS NOT NULL AND LTRIM(RTRIM(order_country)) != &apos;&apos;
+  AND NOT EXISTS (SELECT 1 FROM dim_country dc WHERE dc.country_name = LTRIM(RTRIM(stg_supply_chain.order_country)));"
+            SQLTask:ResultType="0"
+            SQLTask:BypassPrepare="True"
+            xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+        </DTS:ObjectData>
+      </DTS:Executable>
+  </DTS:Executables>
+    <DTS:PrecedenceConstraints>
+      <DTS:PrecedenceConstraint DTS:refId="Package.PrecedenceConstraints\Create_SC_Staging to Load_Products"
+        DTS:CreationName=""
+        DTS:DTSID="{1024686D-E79E-47E3-A27C-BC837BFE6BA4}"
+        DTS:From="Package\Create_SC_Staging"
+        DTS:To="Package\Load_Products"
+        DTS:ObjectName="Create_SC_Staging to Load_Products" />
+      <DTS:PrecedenceConstraint DTS:refId="Package.PrecedenceConstraints\Load_Products to Load_SC_Countries"
+        DTS:CreationName=""
+        DTS:DTSID="{4840D496-48A1-430C-A922-8C4FEF764F9A}"
+        DTS:From="Package\Load_Products"
+        DTS:To="Package\Load_SC_Countries"
+        DTS:ObjectName="Load_Products to Load_SC_Countries" />
+    </DTS:PrecedenceConstraints>
+</DTS:Executable>

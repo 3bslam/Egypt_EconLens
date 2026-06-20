@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<DTS:Executable xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:refId="Package"
+  DTS:CreationDate="5/11/2026 12:00:00 AM"
+  DTS:CreationName="Microsoft.Package"
+  DTS:DTSID="{8099D50F-298C-4A05-9E2A-9A15F8AD196E}"
+  DTS:ExecutableType="Microsoft.Package"
+  DTS:ObjectName="020_Load_dim_country"
+  DTS:PackageFormatVersion="8">
+  <DTS:Property DTS:Name="PackageFormatVersion">8</DTS:Property>
+  <DTS:ConnectionManagers>
+    <DTS:ConnectionManager DTS:refId="Package.ConnectionManagers[EgyptBI_DWH]"
+      DTS:CreationName="OLEDB"
+      DTS:DTSID="{C885D996-D672-43B7-8105-4D5A3D7285B0}"
+      DTS:ObjectName="EgyptBI_DWH">
+      <DTS:ObjectData>
+        <DTS:ConnectionManager DTS:ConnectionString="Data Source=3BSALAM;Initial Catalog=EgyptBI_DWH;Provider=SQLNCLI11.1;Integrated Security=SSPI;" />
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+  </DTS:ConnectionManagers>
+  <DTS:Executables>
+      <DTS:Executable DTS:refId="Package\Create_Staging"
+        DTS:CreationName="Microsoft.ExecuteSQLTask"
+        DTS:DTSID="{2E50A5B2-2639-408B-80E8-78D7A897B151}"
+        DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+        DTS:ObjectName="Create_Staging">
+        <DTS:ObjectData>
+          <SQLTask:SqlTaskData SQLTask:Connection="{C885D996-D672-43B7-8105-4D5A3D7285B0}"
+            SQLTask:SqlStatementSource="IF OBJECT_ID(&apos;stg_comtrade_raw&apos;, &apos;U&apos;) IS NULL BEGIN PRINT &apos;stg_comtrade_raw not found - import via Import Wizard first&apos; END"
+            SQLTask:ResultType="0"
+            SQLTask:BypassPrepare="True"
+            xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+        </DTS:ObjectData>
+      </DTS:Executable>
+      <DTS:Executable DTS:refId="Package\Load_Countries_Comtrade"
+        DTS:CreationName="Microsoft.ExecuteSQLTask"
+        DTS:DTSID="{A3F19CFC-36B4-406D-A76C-D097540AEE3A}"
+        DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+        DTS:ObjectName="Load_Countries_Comtrade">
+        <DTS:ObjectData>
+          <SQLTask:SqlTaskData SQLTask:Connection="{C885D996-D672-43B7-8105-4D5A3D7285B0}"
+            SQLTask:SqlStatementSource="IF OBJECT_ID(&apos;stg_comtrade_raw&apos;, &apos;U&apos;) IS NOT NULL
+BEGIN
+    INSERT INTO dim_country (country_name, is_egypt)
+    SELECT DISTINCT LTRIM(RTRIM(CAST(partnerDesc AS NVARCHAR(100)))),
+        CASE WHEN partnerDesc LIKE &apos;%Egypt%&apos; THEN 1 ELSE 0 END
+    FROM stg_comtrade_raw
+    WHERE partnerDesc IS NOT NULL AND LTRIM(RTRIM(CAST(partnerDesc AS NVARCHAR(100)))) != &apos;&apos;
+      AND TRY_CAST(partnerCode AS INT) != 0
+      AND NOT EXISTS (SELECT 1 FROM dim_country dc WHERE dc.country_name = LTRIM(RTRIM(CAST(stg_comtrade_raw.partnerDesc AS NVARCHAR(100)))));
+END"
+            SQLTask:ResultType="0"
+            SQLTask:BypassPrepare="True"
+            xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+        </DTS:ObjectData>
+      </DTS:Executable>
+  </DTS:Executables>
+    <DTS:PrecedenceConstraints>
+      <DTS:PrecedenceConstraint DTS:refId="Package.PrecedenceConstraints\Create_Staging to Load_Countries_Comtrade"
+        DTS:CreationName=""
+        DTS:DTSID="{DBF430AA-D62F-42FC-BE1E-FCC31DA721E7}"
+        DTS:From="Package\Create_Staging"
+        DTS:To="Package\Load_Countries_Comtrade"
+        DTS:ObjectName="Create_Staging to Load_Countries_Comtrade" />
+    </DTS:PrecedenceConstraints>
+</DTS:Executable>
