@@ -35,7 +35,7 @@
 
 **Egypt EconLens** is an end-to-end BI platform built as an **ITI Graduation Project**. It transforms raw trade data, supply chain records, and macroeconomic indicators into actionable insights through an automated data pipeline and interactive dashboards.
 
-🔗 **Live Cloud Platform Demo:** [https://1m1shlrk-5000.uks1.devtunnels.ms/](https://1m1shlrk-5000.uks1.devtunnels.ms/)
+🔗 **Live Cloud Platform Demo:** [[https://1m1shlrk-5000.uks1.devtunnels.ms/](https://1m1shlrk-5000.uks1.devtunnels.ms/](https://finalprojectapp-ai-grggdybadqfugya3.austriaeast-01.azurewebsites.net/))
 
 ### 🎯 Problem Statement
 
