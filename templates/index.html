@@ -85,10 +85,10 @@
     </div>
 
     <div class="viewStatus" aria-live="polite">
-        <span id="activeReportType" class="statusBadge">PBIX</span>
+        <span id="activeReportType" class="statusBadge">VIDEO</span>
         <div>
             <div class="statusLabel">Currently viewing</div>
-            <div id="activeReportName" class="statusTitle">Full Light Mode PowerBI Dashboard</div>
+            <div id="activeReportName" class="statusTitle">Dashboard Video Walkthrough</div>
         </div>
     </div>
 
@@ -135,7 +135,18 @@
 
 
     <div class="reportList">
-        <button class="reportNavItem active" aria-label="Open Full Light Mode PowerBI Dashboard" data-report="pbix1" data-title="Full Light Mode PowerBI Dashboard" data-type="PBIX" data-title-tooltip="Full Light Mode PowerBI Dashboard" onclick="showReport('pbix1', this)" type="button">
+        <button class="reportNavItem active" aria-label="Play Dashboard Video Demo" data-report="video1" data-title="Dashboard Video Walkthrough" data-type="VIDEO" data-title-tooltip="Play Dashboard Video Demo" onclick="showReport('video1', this)" type="button">
+            <span class="reportIcon dashboardIcon" aria-hidden="true" style="color: #d4a843;">
+                <svg viewBox="0 0 24 24" role="img" aria-label="Video play icon" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
+            </span>
+            <span class="reportText">
+                <strong>Dashboard Video Walkthrough</strong>
+                <small>Video demonstration</small>
+            </span>
+            <span class="reportChip" style="background: #d4a843; color: #000;">DEMO</span><span class="reportAura" aria-hidden="true"></span>
+        </button>
+
+        <button class="reportNavItem" aria-label="Open Full Light Mode PowerBI Dashboard" data-report="pbix1" data-title="Full Light Mode PowerBI Dashboard" data-type="PBIX" data-title-tooltip="Full Light Mode PowerBI Dashboard" onclick="showReport('pbix1', this)" type="button">
             <span class="reportIcon dashboardIcon" aria-hidden="true">
                 <svg viewBox="0 0 24 24" role="img" aria-label="Executive dashboard icon"><path d="M5 5h8.4l-2.2-2.2L12.6 1 18 6.4l-5.4 5.4-1.4-1.8L13.4 8H5V5Zm14 14h-8.4l2.2 2.2L11.4 23 6 17.6l5.4-5.4 1.4 1.8-2.2 2H19v3Z"/><path d="M4 15h3v5H4v-5Zm5-3h3v8H9v-8Zm5-2h3v10h-3V10Z" opacity=".88"/></svg>
             </span>
@@ -326,9 +337,19 @@
 <main id="viewer" class="dashboardShell">
     <div class="dashboardChrome" aria-hidden="true"><span></span><span></span><span></span></div>
 
+    <video
+        id="video1"
+        class="active"
+        src="{{ url_for('static', filename='video/dashboard_demo.mp4') }}"
+        controls
+        autoplay
+        loop
+        muted
+        style="width: 100%; height: 100%; object-fit: contain; border: 0; background: #000;">
+    </video>
+
     <iframe
         id="pbix1"
-        class="active"
         title="Full Light Mode PowerBI Dashboard"
         src="https://app.powerbi.com/reportEmbed?reportId=fd74639c-26b8-4245-927c-f5e5f7bfa1e4&amp;autoAuth=true&amp;ctid=ff4a48d6-4b5e-4fd3-8266-7eafc3e6e23e"
         frameborder="0"
@@ -867,13 +888,19 @@ function showReport(id, btn){
     document.body.classList.toggle("rdl-active", id && id.startsWith("rdl"));
     document.body.classList.toggle("pbix-active", id === "pbix1");
 
-    document.querySelectorAll("#viewer iframe").forEach(function(frame){
-        frame.classList.remove("active");
+    document.querySelectorAll("#viewer iframe, #viewer video").forEach(function(el){
+        el.classList.remove("active");
+        if(el.tagName.toLowerCase() === "video"){
+            el.pause();
+        }
     });
 
     const target = document.getElementById(id);
     if(target){
         target.classList.add("active");
+        if(target.tagName.toLowerCase() === "video"){
+            target.play().catch(function(err){ console.log("Auto play prevented", err); });
+        }
     }
 
     document.querySelectorAll(".reportNavItem, .mobileReportOption, .mobileDockBtn").forEach(function(reportBtn){
