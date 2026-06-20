@@ -1,5 +1,5 @@
 <p align="center">
-  <video src="screenshots/dashboard_demo.mp4" width="100%" autoplay loop muted controls></video>
+  <video src="https://github.com/3bslam/Egypt_EconLens/raw/main/screenshots/dashboard_demo.mp4" width="100%" autoplay loop muted controls></video>
 </p>
 
 <h1 align="center">🇪🇬 Egypt EconLens — Trade & Supply Chain BI Platform</h1>
