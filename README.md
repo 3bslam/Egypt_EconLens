@@ -1,4 +1,4 @@
-https://github.com/3bslam/Egypt_EconLens/raw/main/screenshots/dashboard_demo.mp4
+![](https://github.com/3bslam/Egypt_EconLens/raw/main/screenshots/dashboard_demo.mp4)
 
 <h1 align="center">🇪🇬 Egypt EconLens — Trade & Supply Chain BI Platform</h1>
 
