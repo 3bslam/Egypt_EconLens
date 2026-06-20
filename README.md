@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="screenshots/hero_banner.png" alt="Egypt EconLens Banner" width="100%"/>
+  <video src="screenshots/dashboard_demo.mp4" width="100%" autoplay loop muted controls></video>
 </p>
 
 <h1 align="center">🇪🇬 Egypt EconLens — Trade & Supply Chain BI Platform</h1>
@@ -90,6 +90,15 @@ flowchart LR
     style DWH fill:#4a2040,stroke:#d4a843,color:#fff
     style BI fill:#5c3d1a,stroke:#d4a843,color:#fff
 ```
+
+### 🖼️ System Architecture Screenshots
+<p align="center">
+  <img src="screenshots/solution_architecture.png" alt="Full Solution Architecture" width="90%"/>
+</p>
+
+<p align="center">
+  <img src="screenshots/end_to_end_pipeline.png" alt="End-to-End Data Pipeline" width="90%"/>
+</p>
 
 ---
 
@@ -184,6 +193,11 @@ erDiagram
     dim_egypt_macro ||--o{ dim_date : "date_key"
 ```
 
+### 🖼️ Data Warehouse Star Schema Diagram
+<p align="center">
+  <img src="screenshots/dwh_star_schema.png" alt="Data Warehouse Logical Star Schema" width="90%"/>
+</p>
+
 ---
 
 ## ⚙️ ETL Pipeline (SSIS)
@@ -207,25 +221,39 @@ The ETL pipeline consists of **9 SSIS packages** orchestrated by a Master packag
 <details>
 <summary>📸 Click to expand ETL pipeline screenshots</summary>
 
-#### Fact Supply Chain — Data Flow
-> Complex ETL with Flat File Source → Data Conversion → Lookups (date, product, country, macro) → Derived Columns (shipping_delay_days, is_late, is_synthetic) → Conditional Split → OLE DB Destination + Reject File
-
+#### 1. Date Dimension Loading Flow (`010_Load_dim_date.dtsx`)
 <p align="center">
-  <img src="screenshots/ssis_supply_chain_etl.png" alt="Supply Chain ETL Data Flow" width="90%"/>
+  <img src="screenshots/etl_dim_date.png" alt="Date Dimension ETL Flow" width="90%"/>
 </p>
 
-#### Fact Trade Flows — Data Flow
-> Flat File Source → Conditional Split → Lookups (date, country, commodity) → Data Conversions → OLE DB Destination
-
+#### 2. Country Dimension Loading Flow (`020_Load_dim_country.dtsx`)
 <p align="center">
-  <img src="screenshots/ssis_trade_flows_etl.png" alt="Trade Flows ETL Data Flow" width="90%"/>
+  <img src="screenshots/etl_dim_country.png" alt="Country Dimension ETL Flow" width="90%"/>
 </p>
 
-#### Macro Indicators — Control Flow
-> Load World Bank data → Update Exchange Rates (sequential execution with precedence constraints)
-
+#### 3. Commodity Dimension Loading Flow (`030_Load_dim_commodity.dtsx`)
 <p align="center">
-  <img src="screenshots/ssis_macro_etl.png" alt="Macro Indicators ETL" width="90%"/>
+  <img src="screenshots/etl_dim_commodity.png" alt="Commodity Dimension ETL Flow" width="90%"/>
+</p>
+
+#### 4. Egypt Macroeconomic Data Loading Flow (`040_Load_dim_egypt_macro.dtsx`)
+<p align="center">
+  <img src="screenshots/etl_dim_macro.png" alt="Egypt Macro Data ETL Flow" width="90%"/>
+</p>
+
+#### 5. Product Dimension Loading Flow (`050_Load_dim_product.dtsx`)
+<p align="center">
+  <img src="screenshots/etl_dim_product.png" alt="Product Dimension ETL Flow" width="90%"/>
+</p>
+
+#### 6. Fact Trade Flows Data Loading Flow (`060_Load_fact_trade_flows.dtsx`)
+<p align="center">
+  <img src="screenshots/etl_fact_trade_flows.png" alt="Fact Trade Flows ETL Flow" width="90%"/>
+</p>
+
+#### 7. Fact Supply Chain Data Loading Flow (`070_Load_fact_supply_chain.dtsx`)
+<p align="center">
+  <img src="screenshots/etl_fact_supply_chain.png" alt="Fact Supply Chain ETL Flow" width="90%"/>
 </p>
 
 </details>
@@ -301,6 +329,92 @@ The interactive Power BI dashboard features **10+ report pages** covering:
 | 💱 **Exchange Rate Impact** | USD/EGP correlation with trade volumes |
 | 🔴 **Crisis Analysis** | COVID-19 & devaluation impact assessment |
 
+### 📸 Power BI Development & Workspace Lineage
+<details>
+<summary>📸 Click to expand Power BI development and lineage views</summary>
+
+#### Workspace Lineage View
+<p align="center">
+  <img src="screenshots/pbi_workspace_lineage.png" alt="Power BI Workspace Lineage" width="90%"/>
+</p>
+
+#### Semantic Model & Measures
+<p align="center">
+  <img src="screenshots/pbi_semantic_model.png" alt="Power BI Semantic Model & Measures" width="90%"/>
+</p>
+
+#### Desktop Development Views
+<p align="center">
+  <img src="screenshots/pbi_desktop_dev_1.png" alt="Power BI Desktop Development 1" width="90%"/>
+</p>
+<p align="center">
+  <img src="screenshots/pbi_desktop_dev_2.png" alt="Power BI Desktop Development 2" width="90%"/>
+</p>
+<p align="center">
+  <img src="screenshots/pbi_desktop_dev_3.png" alt="Power BI Desktop Development 3" width="90%"/>
+</p>
+</details>
+
+### 📸 Dashboard Page Visuals (11 Pages)
+<details>
+<summary>📸 Click to expand all 11 dashboard page screenshots</summary>
+
+#### 1. Executive Cockpit
+<p align="center">
+  <img src="screenshots/dashboard_page_1.png" alt="Executive Cockpit Page" width="90%"/>
+</p>
+
+#### 2. Trade Analytics
+<p align="center">
+  <img src="screenshots/dashboard_page_2.png" alt="Trade Analytics Page" width="90%"/>
+</p>
+
+#### 3. Trade Balance Deficit/Surplus
+<p align="center">
+  <img src="screenshots/dashboard_page_3.png" alt="Trade Balance Page" width="90%"/>
+</p>
+
+#### 4. Top Trading Partners Map
+<p align="center">
+  <img src="screenshots/dashboard_page_4.png" alt="Top Partners Page" width="90%"/>
+</p>
+
+#### 5. Strategic Commodities Analysis
+<p align="center">
+  <img src="screenshots/dashboard_page_5.png" alt="Strategic Commodities Page" width="90%"/>
+</p>
+
+#### 6. Supply Chain OTIF KPIs
+<p align="center">
+  <img src="screenshots/dashboard_page_6.png" alt="Supply Chain KPIs Page" width="90%"/>
+</p>
+
+#### 7. Shipping Mode & Delay Analysis
+<p align="center">
+  <img src="screenshots/dashboard_page_7.png" alt="Shipping Mode Page" width="90%"/>
+</p>
+
+#### 8. Risk & Fraud Detection
+<p align="center">
+  <img src="screenshots/dashboard_page_8.png" alt="Risk & Fraud Page" width="90%"/>
+</p>
+
+#### 9. OTIF Performance
+<p align="center">
+  <img src="screenshots/dashboard_page_9.png" alt="OTIF Performance Page" width="90%"/>
+</p>
+
+#### 10. Time Intelligence
+<p align="center">
+  <img src="screenshots/dashboard_page_10.png" alt="Time Intelligence Page" width="90%"/>
+</p>
+
+#### 11. Exchange Rate Impact (USD/EGP Correlation)
+<p align="center">
+  <img src="screenshots/dashboard_page_11.png" alt="Exchange Rate Page" width="90%"/>
+</p>
+</details>
+
 ---
 
 ## 🤖 Egypt Trade AI Dashboard Web App
@@ -312,6 +426,168 @@ Egypt EconLens includes a Flask-based web application that integrates the Power 
 - **AI Text-to-SQL Chatbot:** Translates natural language questions about Egypt's trade and supply chain into SQL queries, executes them against the DWH, and displays real-time tabular and textual summaries.
 - **Security & Integrity Middleware:** Checks generated SQL for safety (prevents destructive commands) and employs a self-repair mechanism to handle query syntax errors.
 - **Power Automate Integration:** Allows users to subscribe to report update alerts and request instant PDF exports of dashboard views.
+
+### 📸 Web App Feature Testing & UI Screenshots
+<details>
+<summary>📸 Click to expand Web App UI and testing screenshots</summary>
+
+Here are screenshots displaying the Web Application interface, including the AI Chat Assistant, dashboard rendering, and API endpoint executions:
+
+#### 1. Home Dashboard Interface
+<p align="center">
+  <img src="screenshots/app_test_1.png" alt="App Home Dashboard" width="90%"/>
+</p>
+
+#### 2. Embedded Power BI Reports Rendering
+<p align="center">
+  <img src="screenshots/app_test_2.png" alt="Power BI embed rendering" width="90%"/>
+</p>
+<p align="center">
+  <img src="screenshots/app_test_3.png" alt="Report view 2" width="90%"/>
+</p>
+<p align="center">
+  <img src="screenshots/app_test_4.png" alt="Report view 3" width="90%"/>
+</p>
+<p align="center">
+  <img src="screenshots/app_test_5.png" alt="Report view 4" width="90%"/>
+</p>
+
+#### 3. AI Text-to-SQL Assistant & Chat Interface
+<p align="center">
+  <img src="screenshots/app_test_6.png" alt="AI chatbot window" width="90%"/>
+</p>
+<p align="center">
+  <img src="screenshots/app_test_7.png" alt="AI query execution" width="90%"/>
+</p>
+<p align="center">
+  <img src="screenshots/app_test_8.png" alt="Chat response table" width="90%"/>
+</p>
+<p align="center">
+  <img src="screenshots/app_test_9.png" alt="Natural language sql prompt" width="90%"/>
+</p>
+
+#### 4. Backend Database Validation and API Endpoints
+<p align="center">
+  <img src="screenshots/app_test_10.png" alt="Database connectivity test" width="90%"/>
+</p>
+<p align="center">
+  <img src="screenshots/app_test_11.png" alt="SQL Server active sessions" width="90%"/>
+</p>
+<p align="center">
+  <img src="screenshots/app_test_12.png" alt="API endpoint response 1" width="90%"/>
+</p>
+<p align="center">
+  <img src="screenshots/app_test_13.png" alt="API endpoint response 2" width="90%"/>
+</p>
+<p align="center">
+  <img src="screenshots/app_test_14.png" alt="API endpoint response 3" width="90%"/>
+</p>
+<p align="center">
+  <img src="screenshots/app_test_15.png" alt="API endpoint response 4" width="90%"/>
+</p>
+<p align="center">
+  <img src="screenshots/app_test_16.png" alt="API endpoint response 5" width="90%"/>
+</p>
+<p align="center">
+  <img src="screenshots/app_test_17.png" alt="API endpoint response 6" width="90%"/>
+</p>
+</details>
+
+---
+
+## ☁️ Microsoft Fabric & Cloud Migration
+
+The local SQL Server Data Warehouse can be migrated to **Microsoft Fabric Synapse Data Warehouse** for cloud-scale analytics:
+
+### 🖼️ Microsoft Fabric & Cloud Operations Screenshots
+<details>
+<summary>📸 Click to expand Microsoft Fabric & Cloud Migration screenshots</summary>
+
+#### Fabric Warehouse Copy Job Evidence
+<p align="center">
+  <img src="screenshots/fabric_migration_1.png" alt="Fabric Copy Job 1" width="90%"/>
+</p>
+<p align="center">
+  <img src="screenshots/fabric_migration_2.png" alt="Fabric Copy Job 2" width="90%"/>
+</p>
+<p align="center">
+  <img src="screenshots/fabric_migration_3.png" alt="Fabric Copy Job 3" width="90%"/>
+</p>
+
+#### Managed Identity and Fabric Access Control
+<p align="center">
+  <img src="screenshots/managed_identity_fabric.png" alt="Managed Identity Fabric Access" width="90%"/>
+</p>
+
+#### Technical Strengths Summary
+<p align="center">
+  <img src="screenshots/tech_strengths.png" alt="Technical Strengths" width="90%"/>
+</p>
+</details>
+
+---
+
+## ⚡ Power Automate & SharePoint Subscriber Management
+
+We developed an automation suite to handle report subscriptions and automated email alerts on update changes:
+
+### 🖼️ Power Automate & SharePoint Lists Screenshots
+<details>
+<summary>📸 Click to expand Power Automate & SharePoint screenshots</summary>
+
+#### Flow 1: Export & Send Dashboard PDF by Email
+<p align="center">
+  <img src="screenshots/power_automate_flow_1.png" alt="Flow 1 visual 1" width="90%"/>
+</p>
+<p align="center">
+  <img src="screenshots/power_automate_flow_2.png" alt="Flow 1 visual 2" width="90%"/>
+</p>
+<p align="center">
+  <img src="screenshots/power_automate_flow_3.png" alt="Flow 1 visual 3" width="90%"/>
+</p>
+
+#### Flow 2: New Reports Added / Modified Reports Notification
+<p align="center">
+  <img src="screenshots/power_automate_flow_4.png" alt="Flow 2 visual 1" width="90%"/>
+</p>
+<p align="center">
+  <img src="screenshots/power_automate_flow_5.png" alt="Flow 2 visual 2" width="90%"/>
+</p>
+<p align="center">
+  <img src="screenshots/power_automate_flow_6.png" alt="Flow 2 visual 3" width="90%"/>
+</p>
+
+#### Flow 3: Subscriber Preference Save Flow
+<p align="center">
+  <img src="screenshots/power_automate_flow_7.png" alt="Flow 3 visual" width="90%"/>
+</p>
+
+#### SharePoint Lists Structure
+<p align="center">
+  <img src="screenshots/sharepoint_report_tracker.png" alt="SharePoint Report tracker list" width="90%"/>
+</p>
+<p align="center">
+  <img src="screenshots/sharepoint_subscribers_1.png" alt="SharePoint Subscribers list 1" width="90%"/>
+</p>
+<p align="center">
+  <img src="screenshots/sharepoint_subscribers_2.png" alt="SharePoint Subscribers list 2" width="90%"/>
+</p>
+<p align="center">
+  <img src="screenshots/sharepoint_subscribers_3.png" alt="SharePoint Subscribers list 3" width="90%"/>
+</p>
+<p align="center">
+  <img src="screenshots/sharepoint_subscribers_4.png" alt="SharePoint Subscribers list 4" width="90%"/>
+</p>
+<p align="center">
+  <img src="screenshots/sharepoint_subscribers_5.png" alt="SharePoint Subscribers list 5" width="90%"/>
+</p>
+<p align="center">
+  <img src="screenshots/sharepoint_subscribers_6.png" alt="SharePoint Subscribers list 6" width="90%"/>
+</p>
+<p align="center">
+  <img src="screenshots/sharepoint_subscribers_7.png" alt="SharePoint Subscribers list 7" width="90%"/>
+</p>
+</details>
 
 ---
 
