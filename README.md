@@ -21,11 +21,19 @@ https://github.com/3bslam/Egypt_EconLens/raw/main/screenshots/dashboard_demo.mp4
   <img src="https://img.shields.io/badge/status-Complete-brightgreen?style=flat-square" alt="Status"/>
 </p>
 
+<p align="center">
+  <a href="https://1m1shlrk-5000.uks1.devtunnels.ms/" target="_blank">
+    <img src="https://img.shields.io/badge/🚀%20Live%20Demo-Try%20Egypt%20EconLens%20Platform-d4a843?style=for-the-badge&logo=rocket" alt="Live Cloud Demo"/>
+  </a>
+</p>
+
 ---
 
 ## 📋 Overview
 
 **Egypt EconLens** is an end-to-end BI platform built as an **ITI Graduation Project**. It transforms raw trade data, supply chain records, and macroeconomic indicators into actionable insights through an automated data pipeline and interactive dashboards.
+
+🔗 **Live Cloud Platform Demo:** [https://1m1shlrk-5000.uks1.devtunnels.ms/](https://1m1shlrk-5000.uks1.devtunnels.ms/)
 
 ### 🎯 Problem Statement
 
