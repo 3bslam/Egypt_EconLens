@@ -303,14 +303,29 @@ The interactive Power BI dashboard features **10+ report pages** covering:
 
 ---
 
+## 🤖 Egypt Trade AI Dashboard Web App
+
+Egypt EconLens includes a Flask-based web application that integrates the Power BI dashboards with a smart **AI Chat Assistant** and **Power Automate workflow automation**.
+
+### 🌟 Key Web App Features
+- **Power BI Embedded Dashboard:** Seamless integration of interactive reports and paginated report canvases directly in the browser.
+- **AI Text-to-SQL Chatbot:** Translates natural language questions about Egypt's trade and supply chain into SQL queries, executes them against the DWH, and displays real-time tabular and textual summaries.
+- **Security & Integrity Middleware:** Checks generated SQL for safety (prevents destructive commands) and employs a self-repair mechanism to handle query syntax errors.
+- **Power Automate Integration:** Allows users to subscribe to report update alerts and request instant PDF exports of dashboard views.
+
+---
+
 ## 📂 Project Structure
 
 ```
 📦 Egypt-EconLens/
-├── 📊 Full_Light_Mode_PowerBI.pbix    # Power BI dashboard
-├── 📜 stored_procedures_FIXED.sql     # 21 stored procedures
-├── 📂 SSIS_Packages/                  # SSIS ETL packages
-│   ├── Master.dtsx                    #   ├── Master orchestrator
+├── 🐍 app2.py                           # Flask Web App entry point
+├── 📄 requirements.txt                  # Python dependencies
+├── 📄 .env.example                      # Configuration template
+├── 📊 Full_Light_Mode_PowerBI.pbix      # Power BI dashboard
+├── 📜 stored_procedures_FIXED.sql       # 21 DWH stored procedures
+├── 📂 SSIS_Packages/                    # SSIS ETL packages
+│   ├── Master.dtsx                      #   ├── Master orchestrator
 │   ├── 010_Load_dim_date.dtsx         #   ├── Dimension loaders
 │   ├── 020_Load_dim_country.dtsx      #   │
 │   ├── 030_Load_dim_commodity.dtsx    #   │
@@ -318,12 +333,24 @@ The interactive Power BI dashboard features **10+ report pages** covering:
 │   ├── 050_Load_dim_product.dtsx      #   │
 │   ├── 060_Load_fact_trade_flows.dtsx #   ├── Fact loaders
 │   ├── 070_Load_fact_supply_chain.dtsx#   │
-│   └── 080_DQ_Validation.dtsx        #   └── Data quality
-├── 📂 data/                           # Sample data files
+│   └── 080_DQ_Validation.dtsx        #   └── Data quality validation
+├── 📂 middleware/                       # AI Assistant query and prompt logic
+│   ├── prompt_builder.py                #   ├── Prompt construction
+│   ├── schema_retriever.py              #   ├── DWH metadata lookup
+│   └── sql_validator.py                 #   └── SQL validation and repair
+├── 📂 templates/                        # HTML UI pages
+│   └── index.html                       #   └── Main dashboard & chat interface
+├── 📂 static/                           # UI Assets & Styling
+│   └── css/                             #   
+│       └── style.css                    #   └── Styling rules
+├── 📂 knowledge/                        # LLM context references
+│   ├── schema.json                      #   ├── JSON schema of DWH
+│   └── schema.txt                       #   └── Text description of tables
+├── 📂 data/                             # Sample data files
 │   ├── dim_egypt_macro_READY.csv      #   ├── Macro indicators
 │   └── USD_EGP Historical Data.csv    #   └── Exchange rates
-├── 📂 screenshots/                    # ETL & architecture screenshots
-└── 📄 .gitignore                      # Excludes large files
+├── 📂 screenshots/                      # ETL & architecture screenshots
+└── 📄 .gitignore                        # Repository exclusion rules
 ```
 
 > **📁 Full datasets** (CSV files > 100MB) are hosted on Google Drive:
@@ -342,6 +369,8 @@ The interactive Power BI dashboard features **10+ report pages** covering:
 | Visual Studio | 2019+ | SSIS package development |
 | SSIS Extension | Latest | VS integration for SSIS |
 | Power BI Desktop | Latest | Dashboard viewing |
+| Python | 3.10+ | Flask Web App & AI Assistant backend |
+| ODBC Driver 17 | Latest | SQL Server connection for Python |
 
 ### Setup Steps
 
@@ -366,6 +395,23 @@ git clone https://github.com/3bslam/Egypt_EconLens.git
 # 6. Open Power BI Dashboard
 # Open Full_Light_Mode_PowerBI.pbix in Power BI Desktop
 # Update data source connection if needed
+
+# 7. Configure Flask Web App Environment
+# Copy the example environment file and fill in your keys (OpenRouter API key, SQL Server name, etc.)
+cp .env.example .env
+
+# 8. Create Python Virtual Environment & Install Dependencies
+python -m venv .venv
+# On Windows (Powershell):
+.\.venv\Scripts\Activate.ps1
+# On Linux/macOS:
+# source .venv/bin/activate
+
+python -m pip install --upgrade pip
+pip install -r requirements.txt
+
+# 9. Run the Flask Web Application
+python app2.py
 ```
 
 ---

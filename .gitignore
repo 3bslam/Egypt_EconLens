@@ -41,11 +41,21 @@ ehthumbs.db
 Desktop.ini
 .DS_Store
 
-# -------------------- Python -------------------------------
+# -------------------- Python & Web App ---------------------
 __pycache__/
-*.pyc
+*.py[cod]
 .env
+.env.*
+!.env.example
 venv/
+.venv/
+exports/
+generated/
+*.log
+*.sqlite
+*.db
+node_modules/
+.idea/
 
 # -------------------- Documentation (large .docx) ----------
 *.docx
